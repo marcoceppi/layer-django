@@ -1,0 +1,9 @@
+tags:
+  - django
+  - cms
+provides:
+  website:
+    interface: http
+requires:
+  postgres:
+    interface: pgsql

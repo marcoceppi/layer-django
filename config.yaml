@@ -1,0 +1,11 @@
+options:
+  django-port:
+    default: 8000
+    type: int
+    description: "Port which Django application (gunicorn) should run on"
+  django-debug:
+    default: False
+    type: boolean
+    description: "Put Django in Debug mode"
+
+

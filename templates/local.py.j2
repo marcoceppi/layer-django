@@ -1,0 +1,21 @@
+# This file is managed by Juju. Do not edit or remove
+
+from {{settings_import}} import *
+
+DEBUG = {{ debug }}
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': '{{ database.database() }}',
+        'USER': '{{ database.user() }}',
+        'PASSWORD': '{{ database.password() }}',
+        'HOST': '{{ database.host() }}',
+        'PORT': '{{ database.port() }}',
+    }
+}
+
+MEDIA_ROOT = '{{media_path}}'
+STATIC_ROOT = '{{static_path}}'
+
+ALLOWED_HOSTS = ('*',)

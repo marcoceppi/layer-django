@@ -1,0 +1,16 @@
+#createadmin:
+#  description: "Create Django admin account"
+#    params:
+#      username:
+#        description: Admin username
+#        type: string
+#        default: "root"
+#      password:
+#        description: Admin password
+#        type: string
+#      email:
+#        description: Admin email address
+#        type: string
+#    required: ['username', 'password']
+#restart-gunicorn:
+#  description: "Kick gunicorn"
