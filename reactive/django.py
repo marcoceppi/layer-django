@@ -31,7 +31,7 @@ from charms.reactive import (
 )
 
 
-@hook('install', 'config-changed')
+@hook('install')
 def install():
     adduser('django')
     dcfg = django.config()
@@ -52,11 +52,13 @@ def install():
 
 
 @when('postgres.database.available')
+@when('django.source.available')
+@when_not('django.configured')
 def connect_db(pgsql):
     dcfg = django.config()
 
     apt_install(['python-psycopg2'])
-    status_set('maintenance', 'writing local.py settings')
+
     ctx = {
         'database': pgsql,
         'debug': config('django-debug'),
@@ -72,9 +74,11 @@ def connect_db(pgsql):
     if import_settings.startswith('.'):
         off = 1
 
+    settings_cfg = os.path.join(dcfg.get('source-path'), cfg_path, 'juju.py')
+    status_set('maintenance', 'writing Django settings')
     cfg_path = os.path.dirname(import_settings[off:].replace('.', '/'))
     render(source='local.py.j2',
-           target=os.path.join(dcfg.get('source-path'), cfg_path, 'juju.py'),
+           target=settings_cfg,
            owner='django',
            group='django',
            perms=0o644,
@@ -84,23 +88,34 @@ def connect_db(pgsql):
              os.path.join(dcfg.get('source-path'), cfg_path, 'juju.py'))
     dcfg.set('config-import', '.'.join([cfg_path, 'juju']))
 
-    if not is_state('django.data-loaded'):
-        source_install(dcfg)
-        django.manage(['migrate', '--noinput'])
-        set_state('django.data-loaded')
-        set_state('django.ready')
-    start()
+    source_install(dcfg)
+    set_state('django.configured')
 
 
-@hook('start')
+@when('django.configured')
+@when_not('django.available')
+def load_data()
+    django.manage(['migrate', '--noinput'])
+    set_state('django.available')
+
+
+@when('django.ready')
+@when_not('circus.running')
 def start():
-    if not is_state('django.data-loaded'):
-        return
-
     if service_running('circus'):
         service_restart('circus')
     else:
         service_start('circus')
+
+    set_state('circus.running')
+    remove_state('django.restart')
+
+
+@when('django.ready')
+@when('django.restart')
+def restart():
+    remove_state('circus.running')
+    start()
 
 
 def source_install(dcfg):
@@ -137,3 +152,6 @@ def source_install(dcfg):
            group='root',
            perms=0o644,
            context={})
+
+    set_state('django.source.available')
+    set_state('django.restart')
