@@ -25,6 +25,7 @@ from charms import django
 from charms.reactive import (
     hook,
     when,
+    when_not,
     is_state,
     set_state,
     remove_state,
@@ -51,6 +52,12 @@ def install():
     start()
 
 
+@when('django.source.available')
+@when_not('postgres.connected')
+def postgres_blocked():
+    status_set('blocked', 'postgres database required')
+
+
 @when('postgres.database.available')
 @when('django.source.available')
 @when_not('django.configured')
@@ -74,9 +81,11 @@ def connect_db(pgsql):
     if import_settings.startswith('.'):
         off = 1
 
-    settings_cfg = os.path.join(dcfg.get('source-path'), cfg_path, 'juju.py')
-    status_set('maintenance', 'writing Django settings')
     cfg_path = os.path.dirname(import_settings[off:].replace('.', '/'))
+    settings_cfg = os.path.join(dcfg.get('source-path'), cfg_path, 'juju.py')
+
+    status_set('maintenance', 'writing Django settings')
+
     render(source='local.py.j2',
            target=settings_cfg,
            owner='django',
@@ -94,7 +103,7 @@ def connect_db(pgsql):
 
 @when('django.configured')
 @when_not('django.available')
-def load_data()
+def load_data():
     django.manage(['migrate', '--noinput'])
     set_state('django.available')
 
