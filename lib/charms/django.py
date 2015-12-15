@@ -20,7 +20,7 @@ def manage(cmd):
     if not isinstance(cmd, list):
         cmd = cmd.split(' ')
 
-    exe = [dcfg.get('python', '/usr/bin/python'), 'manage.py']
+    exe = [python(), 'manage.py']
     extra = []
     if dcfg.get('config-import'):
         extra.append('--settings=%s' % dcfg.get('config-import'))
@@ -31,3 +31,11 @@ def manage(cmd):
 def call(cmd):
     dcfg = config()
     subprocess.check_call(cmd, cwd=dcfg.get('source-path'))
+
+
+def pip():
+    return config().get('pip', '/usr/bin/pip')
+
+
+def python():
+    return config().get('python', '/usr/bin/python')

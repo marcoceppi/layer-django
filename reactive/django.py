@@ -46,7 +46,7 @@ def install():
                  'libxml2-dev', 'virtualenvwrapper', 'libxslt-dev', 'git-core',
                  'python-git', 'libpq-dev'] + dcfg.get('apt-packages', []))
 
-    subprocess.check_call(['pip', 'install', 'circus', 'gunicorn', ])
+    subprocess.check_call([django.pip(), 'install', 'circus', 'gunicorn', ])
     source_install(dcfg)
     open_port(config('django-port'))
     start()
@@ -140,7 +140,7 @@ def source_install(dcfg):
 
     status_set('maintenance', 'installing project deps')
     if dcfg.get('pip-requirements'):
-        django.call([dcfg.get('pip', '/usr/bin/pip'), 'install', '-r',
+        django.call([django.pip(), 'install', '-r',
                      dcfg.get('pip-requirements')])
 
     render(source='circus.ini.j2',
