@@ -9,7 +9,7 @@ def config():
     with open('django.yaml') as f:
         django_cfg = yaml.safe_load(f.read())
 
-    for k, v in django_cfg.iteritems():
+    for k, v in django_cfg.items():
         db.set(k, v)
 
     return db
