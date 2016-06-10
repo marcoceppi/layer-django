@@ -1,1 +1,76 @@
-includes: ['layer:basic', 'interface:pgsql', 'interface:http']
+includes:
+  - 'layer:basic'
+  - 'layer:apt'
+  - 'interface:pgsql'
+  - 'interface:http'
+defines:
+  install-path:
+    type: string
+    default: '/srv/django'
+    description: 'install path for django site'
+  settings-import:
+    type: string
+    default: '.settings'
+    description: 'python import path for the settings module'
+  pip-requirements:
+    type: string
+    description: 'path relative to `install-path` for a pip requirements.txt file'
+  wsgi:
+    type: string
+    default: '.wsgi:application'
+    description: 'Python import path relative to install-path for wsgi'
+  source:
+    type: object
+    params:
+      url:
+        type: string
+        description: 'vcs source (lp, github, etc) for Django site'
+  python:
+    type: string
+    default: '/usr/bin/python'
+  pip:
+    default: '/usr/bin/pip'
+    type: string
+    description: 'full path to pip binary for installation'
+  static-path:
+    default: 'static'
+    type: string
+    description: 'relative path from install-path for static content'
+  media-path:
+    default: 'static'
+    type: string
+    description: 'relative path from install-path for media content'
+options:
+  basic:
+    packages:
+      - 'build-essential'
+      - 'binutils-doc'
+      - 'autoconf'
+      - 'authbind'
+      - 'bison'
+      - 'libjpeg-dev'
+      - 'libfreetype6-dev'
+      - 'zlib1g-dev'
+      - 'libzmq3-dev'
+      - 'libgdbm-dev'
+      - 'libncurses5-dev'
+      - 'automake'
+      - 'libtool'
+      - 'libffi-dev'
+      - 'curl'
+      - 'git'
+      - 'gettext'
+      - 'flex'
+      - 'postgresql-client'
+      - 'postgresql-client-common'
+      - 'python3'
+      - 'python3-pip'
+      - 'python-dev'
+      - 'python3-dev'
+      - 'python-pip'
+      - 'libxml2-dev'
+      - 'virtualenvwrapper'
+      - 'libxslt-dev'
+      - 'git-core',
+      - 'python-git'
+      - 'libpq-dev'

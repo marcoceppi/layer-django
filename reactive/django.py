@@ -16,10 +16,9 @@ from charmhelpers.core.host import (
     service_start,
 )
 
-from charmhelpers.fetch import (
-    apt_install,
-    install_remote,
-)
+from charmhelpers.fetch import install_remote
+
+from charms import apt
 from charms.layer import django
 
 from charms.reactive import (
@@ -32,23 +31,17 @@ from charms.reactive import (
 )
 
 
-@hook('install')
+@when_not('django.installed')
 def install():
     adduser('django')
     dcfg = django.config()
-    status_set('maintenance', 'installing system deps')
-    apt_install(['build-essential', 'binutils-doc', 'autoconf', 'authbind',
-                 'bison', 'libjpeg-dev', 'libfreetype6-dev', 'zlib1g-dev',
-                 'libzmq3-dev', 'libgdbm-dev', 'libncurses5-dev', 'automake',
-                 'libtool', 'libffi-dev', 'curl', 'git', 'gettext', 'flex',
-                 'postgresql-client', 'postgresql-client-common', 'python3',
-                 'python3-pip', 'python-dev', 'python3-dev', 'python-pip',
-                 'libxml2-dev', 'virtualenvwrapper', 'libxslt-dev', 'git-core',
-                 'python-git', 'libpq-dev'] + dcfg.get('apt-packages', []))
+    status_set('maintenance', 'installing deps')
+    apt.queue_install(dcfg.get('apt-packages', []))
 
     subprocess.check_call([django.pip(), 'install', 'circus', 'gunicorn', ])
     source_install(dcfg)
     open_port(config('django-port'))
+    set_state('django.installed')
     start()
 
 @when('django.ready')
