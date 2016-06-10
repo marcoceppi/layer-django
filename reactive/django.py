@@ -115,7 +115,6 @@ def start():
         service_start('circus')
 
     set_state('circus.running')
-    remove_state('django.restart')
 
 
 @when('django.ready')
@@ -123,6 +122,7 @@ def start():
 def restart():
     remove_state('circus.running')
     start()
+    remove_state('django.restart')
 
 
 def source_install(dcfg):
