@@ -47,7 +47,7 @@ def install():
 @when('django.ready')
 @when('website.available')
 def send_port(http):
-    http.configure(80)
+    http.configure(config('django-port'))
 
 
 @when('django.source.available')
@@ -130,6 +130,9 @@ def source_install(dcfg):
     status_set('maintenance', 'installing %s repo' % source['url'])
     if not os.path.exists(dcfg.get('install-path')):
         os.makedirs(dcfg.get('install-path'))
+
+    if 'url' not in source:
+        return
 
     source_path = install_remote(source['url'],
                                  dest=dcfg.get('install-path'))
