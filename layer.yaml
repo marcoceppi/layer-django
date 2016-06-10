@@ -1,1 +1,2 @@
 includes: ['layer:basic', 'interface:pgsql', 'interface:http']
+tactics: ['tactics.django.DjangoYamlTactic']
