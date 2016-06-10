@@ -20,8 +20,8 @@ from charmhelpers.fetch import (
     apt_install,
     install_remote,
 )
+from charms.layer import django
 
-from charms import django
 from charms.reactive import (
     hook,
     when,
