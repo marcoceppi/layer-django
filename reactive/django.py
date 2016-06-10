@@ -51,6 +51,11 @@ def install():
     open_port(config('django-port'))
     start()
 
+@when('django.ready')
+@when('website.available')
+def send_port(http):
+    http.configure(80)
+
 
 @when('django.source.available')
 @when_not('postgres.connected')
